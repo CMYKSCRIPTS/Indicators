@@ -4,7 +4,6 @@
 ## Introduction 
 I started using this script because of its fast reaction, and good tell for buy/sell moments on a short timescale. 
 For larger timescales, the overall trend should be taken into account regarding the levels. 
-In the future i will update this indicator, to automatically adjust those. 
 
 ## Origin 
 The Relative Momentum Index was developed by Roger Altman and was introduced in his article in the February, 1993 issue of Technical Analysis of Stocks & Commodities magazine. 
@@ -17,11 +16,11 @@ Four levels to indicate intensity.
 Two Timescales, to overview the broader trend, and fast movements. 
 
 ## Usage 
-RMI indicates overbought and oversold zones, and can be used for divergence and trend analysis. 
+RMI indicates `overbought` and `oversold` zones, and can be used for divergence and trend analysis. 
 
-## Future Prospects 
-Self adjusting levels, relative to an SMA trend. 
-Alternative RMI, which functions as an overlay. 
+## Prospects 
+* Self adjusting levels, relative to an SMA trend. 
+* Alternative RMI, which functions as an overlay. 
 
 
 ```
