@@ -1,4 +1,4 @@
-# ░▒▓█ CMYK ◊ RMI 
+RMI 
 ![Preview](https://s3.tradingview.com/u/uXW9ej8i_mid.png)
 
 ## Introduction 
