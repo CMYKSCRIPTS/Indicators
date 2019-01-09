@@ -1,4 +1,4 @@
-![PREVIEW](image url)
+![PREVIEW](https://s3.tradingview.com/w/WqlNSIjd_mid.png)
 # TITLE
 ## Introduction 
 Short introduction to the script
