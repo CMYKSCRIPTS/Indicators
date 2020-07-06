@@ -1,5 +1,5 @@
-![PREVIEW](https://s3.tradingview.com/w/WqlNSIjd_mid.png)
 # ░▒▓█ CMYK ◊ RMI ARROWS
+![PREVIEW](https://s3.tradingview.com/w/WqlNSIjd_mid.png)
 ## Introduction 
 I started using this script because of its fast reaction, and good tell for buy/sell moments. 
 For larger timescales, the overall trend should be taken into account regarding the levels. 
