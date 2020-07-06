@@ -1,4 +1,4 @@
-# ░▒▓█ CMYK ◊ HIGH LOW
+# |ᴄᴍʏᴋ| High Low
 ![PREVIEW](https://www.tradingview.com/x/m7HfTyYI/)
 ## Introduction 
 This script is intended to display High and Low values, alongside Highest and Lowest of an adjustable period 
