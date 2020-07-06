@@ -1,5 +1,5 @@
-![PREVIEW](image url.png)
 # TITLE
+![PREVIEW](image url.png)
 ## Introduction 
 Short introduction to the script
 * Your motivation to create this
