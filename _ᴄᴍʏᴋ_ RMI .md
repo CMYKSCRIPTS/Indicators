@@ -1,5 +1,5 @@
 RMI 
-![Preview](https://s3.tradingview.com/u/uXW9ej8i_mid.png)
+![Preview](https://www.tradingview.com/x/a9RgmFiX/)
 
 ## Introduction 
 I started using this script because of its fast reaction, and good tell for buy/sell moments on a short timescale. 
@@ -24,89 +24,120 @@ RMI indicates `overbought` and `oversold` zones, and can be used for divergence 
 
 
 ```
-//@version=2
-study("CMYK RMI", scale=scale.right, overlay=false, precision=0)
-// Relative Momentum Index
-// Code is provided as public domain, no warranty
-// Modified by MTVPMC
-//
-//****************************** COLORS *****************************
-cyan        = #00CCCC
-oker        = #FF9900
-blues       = #0099CC
-reds        = #FF6600
-magenta     = #FF00FF
+//@version=4
+//                                                              STUDY
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+study("|ᴄᴍʏᴋ| RMI", overlay=false, precision=0)
+//                                                              COLORS
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+white           = #FFFFFF
+gray            = #888888
+cyan            = #00CCCC
+oker            = #FF9900
+blues           = #0099CC
+reds            = #FF6600
+magenta         = #FF00FF
+//                                                              INPUTS
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//                                                              RMI
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ 
+SOURCE          = input(defval=close                        , title="Source")
+ALPHA_PERIOD    = input(defval=30   , minval=1              , title="Alpha Period")
+ALPHA_LOOPBACK  = input(defval=2    , minval=1              , title="Alpha Loopback")
+ALPHA_AVERAGE   = input(defval=false                        , title="Alpha SMA Trendline")
 
-//****************************** INPUTS *****************************
-FastLenght      = input(defval=30   , minval=1                  , type=integer  , title="Fast EMA Averaging Length")
-FastMomentum    = input(defval=2    , minval=1                                  , title="Fast Lookback for Momentum")
-FastInA         = input(defval=false                            , type=bool     , title="Fast SMA Trendline")
+BETA_PERIOD     = input(defval=300   , minval=1             , title="Beta Period")
+BETA_LOOPBACK   = input(defval=20    , minval=1             , title="Beta Loopback")
+BETA_AVERAGE    = input(defval=false                        , title="Beta SMA Trendline")
 
-SlowLenght      = input(defval=250  , minval=1                  , type=integer  , title="Slow EMA Averaging Length")
-SlowMomentum    = input(defval=20   , minval=1                                  , title="Slow Lookback for Momentum")
-SlowInA         = input(defval=false                            , type=bool     , title="Slow SMA Trendline")
+RANGE_NEAR      = input(defval=0.4   , minval=-1 , maxval=1 , title="Near Boundary")
+RANGE_FAR       = input(defval=0.6   , minval=-1 , maxval=1 , title="Far Boundary")
 
-smaLen          = input(defval=10   , minval=1                  , type=integer  , title="SMA Period")
+//                                                              FUNCTIONS
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//                                                              AVERAGING
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+//                      ROLLING MOVING AVERAGE
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+RMA( SERIES , LENGHT )=>
+	ALPHA               = 1 / LENGHT
+    float SUM           = na
+    SUM                 := ALPHA * SERIES + ( 1.0 - ALPHA ) * nz( SUM[1] )
+    
+//                                                              INDEXING
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+//                      RELATIVE MOMENTUM INDEX
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+RMI( SOURCE , LENGHT , MOMENTUM )=> // USES LINEAR VALUES , MAKE WITH LOG VALUES LIKE CHART SCALING
+    INC                 = RMA( max( SOURCE              - SOURCE[MOMENTUM]   , 0 )    , LENGHT)
+    DEC                 = RMA( max( SOURCE[MOMENTUM]    - SOURCE             , 0 )    , LENGHT)
+    RMI                 = DEC   == 0.0  ? 0.0     : (INC-DEC)/(INC+DEC)
 
-LTOP            = input(defval=30   , minval=00  , maxval=50    , type=integer  , title="Top Boundary")
-LHIGH           = input(defval=20   , minval=00  , maxval=50    , type=integer  , title="High Boundary")
+//                                                              CALCULATIONS
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ALPHA_RMI       = RMI(SOURCE,ALPHA_PERIOD,ALPHA_LOOPBACK)
+BETA_RMI        = RMI(SOURCE,BETA_PERIOD,BETA_LOOPBACK)
 
-LLOW            = input(defval=-20  , minval=-50 , maxval=00    , type=integer  , title="Low Boundary")
-LBOTTOM         = input(defval=-30  , minval=-50 , maxval=00    , type=integer  , title="Bottom Boundary")
+//                                                              CONDITIONS
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+AON = ALPHA_RMI >= RANGE_NEAR
+BON = BETA_RMI  >= RANGE_NEAR
 
+AOF = ALPHA_RMI >= RANGE_FAR
+BOF = BETA_RMI  >= RANGE_FAR
 
+AUN = ALPHA_RMI <= -RANGE_NEAR
+BUN = BETA_RMI  <= -RANGE_NEAR
 
-//****************************** CALCULATION *****************************
-FastemaInc      = ema(max(close - close[FastMomentum], 0), FastLenght)
-FastemaDec      = ema(max(close[FastMomentum] - close, 0), FastLenght)
-FastRMI         = FastemaDec == 0 ? 0 : 50 - 100 / (1 + FastemaInc / FastemaDec)
+AUF = ALPHA_RMI <= -RANGE_FAR
+BUF = BETA_RMI  <= -RANGE_FAR
 
-SlowemaInc      = ema(max(close - close[SlowMomentum], 0), SlowLenght)
-SlowemaDec      = ema(max(close[SlowMomentum] - close, 0), SlowLenght)
-SlowRMI         = SlowemaDec == 0 ? 0 : 50 - 100 / (1 + SlowemaInc / SlowemaDec)
+//                                                              GRAPHICAL
+//░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+//                                                              PLOT
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+PTOP                = plot(RANGE_FAR         , transp=20                , title="Toplevel"                  , color=oker)
+PHIGH               = plot(RANGE_NEAR        , transp=100               , title="Highlevel"                 , color=oker)
+PLOW                = plot(-RANGE_NEAR       , transp=100               , title="Lowlevel"                  , color=cyan)
+PBOTTOM             = plot(-RANGE_FAR        , transp=20                , title="Bottomlevel"               , color=cyan)
 
-//****************************** PLOT *****************************
-PTOP            = plot(LTOP              , transp=20                            , title='Toplevel'                  , color=oker)
-PHIGH           = plot(LHIGH             , transp=100                           , title='Highlevel'                 , color=oker)
-PLOW            = plot(LLOW              , transp=100                           , title='Lowlevel'                  , color=cyan)
-PBOTTOM         = plot(LBOTTOM           , transp=20                            , title='Bottomlevel'               , color=cyan)
+AlphaoverHIGH       = plot(AON ? ALPHA_RMI  : RANGE_NEAR                , title="AlphaOverHigh"             , color=oker)
+BetaoverHIGH        = plot(BON ? BETA_RMI   : RANGE_NEAR                , title="BetaOverHigh"              , color=oker)
 
-FastoverTOP         = plot(FastRMI >= LTOP ? FastRMI : LTOP                     , title='FastOvertop'               , color=oker)
-FastoverHIGH        = plot(FastRMI >= LHIGH ? FastRMI : LHIGH                   , title='FastOverHigh'              , color=oker)
-FastunderLOW        = plot(FastRMI <= LLOW ? FastRMI : LLOW                     , title='FastUnderLow'              , color=cyan)
-FastunderBOTTOM     = plot(FastRMI <= LBOTTOM ? FastRMI : LBOTTOM               , title='FastUnderbottom'           , color=cyan)
+AlphaoverTOP        = plot(AOF ? ALPHA_RMI  : RANGE_FAR                 , title="AlphaOvertop"              , color=oker)
+BetaoverTOP         = plot(BOF ? BETA_RMI   : RANGE_FAR                 , title="BetaOvertop"               , color=oker)
 
-SlowoverTOP         = plot(SlowRMI >= LTOP ? SlowRMI : LTOP                     , title='SlowOvertop'               , color=oker)
-SlowoverHIGH        = plot(SlowRMI >= LHIGH ? SlowRMI : LHIGH                   , title='SlowOverHigh'              , color=oker)
+AlphaunderLOW       = plot(AUN ? ALPHA_RMI  : -RANGE_NEAR               , title="AlphaUnderLow"             , color=cyan)
+BetaunderLOW        = plot(BUN ? BETA_RMI   : -RANGE_NEAR               , title="BetaUnderLow"              , color=cyan)
 
-SlowunderLOW        = plot(SlowRMI <= LLOW ? SlowRMI : LLOW                     , title='SlowUnderLow'              , color=cyan)
-SlowunderBOTTOM     = plot(SlowRMI <= LBOTTOM ? SlowRMI : LBOTTOM               , title='SlowUnderbottom'           , color=cyan)
+AlphaunderBOTTOM    = plot(AUF ? ALPHA_RMI  : -RANGE_FAR                , title="AlphaUnderbottom"          , color=cyan)
+BetaunderBOTTOM     = plot(BUF ? BETA_RMI   : -RANGE_FAR                , title="BetaUnderbottom"           , color=cyan)
 
-plot(FastRMI                                                                    , title='FastRMI'                   , color=magenta)
-plot(FastInA?sma(FastRMI,smaLen):na                                             , title='FastSMA'                   , color=cyan)
+plot(ALPHA_RMI                                                          , title="ALPHA_RMI"                 , color=magenta)
+plot(ALPHA_AVERAGE?sma(ALPHA_RMI,ALPHA_PERIOD):na                       , title="AlphaSMA"                  , color=cyan)
 
-plot(SlowRMI                                                                    , title='SlowRMI'                   , color=white)
-plot(SlowInA?sma(SlowRMI,smaLen):na                                             , title='SlowSMA'                   , color=blues)
+plot(BETA_RMI                                                           , title="BETA_RMI"                  , color=white)
+plot(BETA_AVERAGE?sma(BETA_RMI,BETA_PERIOD):na                          , title="BetaSMA"                   , color=blues)
+//                                                              FILL
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+fill(AlphaoverTOP    , PTOP                 , transp=20                 , title="AlphaTopfill"              , color=oker)
+fill(AlphaoverHIGH   , PHIGH                , transp=90                 , title="AlphaHighfill"             , color=oker)
 
-//****************************** FILL *****************************
-fill(FastoverTOP    , PTOP              , transp=20                             , title='FastTopfill'               , color=oker)
-fill(FastoverHIGH   , PHIGH             , transp=90                             , title='FastHighfill'              , color=oker)
+fill(PLOW           , AlphaunderLOW         , transp=90                 , title="AlphaLowfill"              , color=cyan)
+fill(PBOTTOM        , AlphaunderBOTTOM      , transp=20                 , title="AlphaBottomfill"           , color=cyan)
 
-fill(PLOW       , FastunderLOW          , transp=90                             , title='FastLowfill'               , color=cyan)
-fill(PBOTTOM    , FastunderBOTTOM       , transp=20                             , title='FastBottomfill'            , color=cyan)
+fill(BetaoverTOP    , PTOP                  , transp=20                 , title="BetaTopfill"               , color=reds)
+fill(BetaoverHIGH   , PHIGH                 , transp=90                 , title="BetaHighfill"              , color=reds)
 
-fill(SlowoverTOP    , PTOP              , transp=20                             , title='SlowTopfill'               , color=reds)
-fill(SlowoverHIGH   , PHIGH             , transp=90                             , title='SlowHighfill'              , color=reds)
+fill(PLOW           , BetaunderLOW          , transp=90                 , title="BetaLowfill"               , color=blues)
+fill(PBOTTOM        , BetaunderBOTTOM       , transp=20                 , title="BetaBottomfill"            , color=blues)
+//                                                              LINES
+//▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+hline(RANGE_FAR     , linestyle=hline.style_dotted                      , title="Toplevel"                  , color=reds)
+hline(RANGE_NEAR    , linestyle=hline.style_dotted                      , title="Highlevel"                 , color=oker)
 
-fill(PLOW       , SlowunderLOW          , transp=90                             , title='SlowLowfill'               , color=blues)
-fill(PBOTTOM    , SlowunderBOTTOM       , transp=20                             , title='SlowBottomfill'            , color=blues)
+hline(00            , linestyle=hline.style_dotted                      , title="Midline"                   , color=gray)
 
-//****************************** LINES *****************************
-hline(LTOP                                          , linestyle=dotted          , title='Toplevel'                  , color=reds)
-hline(LHIGH                                         , linestyle=dotted          , title='Highlevel'                 , color=oker)
-
-hline(00                                            , linestyle=dotted          , title='Midline'                   , color=gray)
-
-hline(LLOW                                          , linestyle=dotted          , title='Lowlevel'                  , color=cyan)
-hline(LBOTTOM                                       , linestyle=dotted          , title='Bottomlevel'               , color=blues)
+hline(- RANGE_NEAR  , linestyle=hline.style_dotted                      , title="Lowlevel"                  , color=cyan)
+hline(- RANGE_FAR   , linestyle=hline.style_dotted                      , title="Bottomlevel"               , color=blues)
 ```
