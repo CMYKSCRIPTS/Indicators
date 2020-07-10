@@ -1,5 +1,5 @@
 # |ᴄᴍʏᴋ| RMI Arrows
-![PREVIEW](https://www.tradingview.com/x/64QRcrh4/)
+![PREVIEW](https://www.tradingview.com/x/UxWB7KLd/)
 ## Introduction 
 I started using this script because of its fast reaction, and good tell for buy/sell moments. 
 For larger timescales, the overall trend should be taken into account regarding the levels. 
@@ -70,7 +70,7 @@ RMA( SERIES , LENGHT )=>
 RMI( SOURCE , LENGHT , MOMENTUM )=> // USES LINEAR VALUES , MAKE WITH LOG VALUES LIKE CHART SCALING
     INC                 = RMA( max( SOURCE              - SOURCE[MOMENTUM]   , 0 )    , LENGHT)
     DEC                 = RMA( max( SOURCE[MOMENTUM]    - SOURCE             , 0 )    , LENGHT)
-    RMI                 = DEC   == 0.0  ? 0.0     : -(INC-DEC)/(INC+DEC)
+    RMI                 = DEC   == 0.0  ? 0.0     : (INC-DEC)/(INC+DEC)
 
 //                                                              CALCULATIONS
 //░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -80,28 +80,28 @@ BETA_RMI        = RMI(SOURCE,BETA_PERIOD,BETA_LOOPBACK)
 //                                                              CONDITIONS
 //░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 AON = APLHA_RMI >= RANGE_NEAR
-BON = BETA_RMI >= RANGE_NEAR
+BON = BETA_RMI  >= RANGE_NEAR
 
 AOF = APLHA_RMI >= RANGE_FAR
-BOF = BETA_RMI >= RANGE_FAR
+BOF = BETA_RMI  >= RANGE_FAR
 
 AUN = APLHA_RMI <= -RANGE_NEAR
-BUN = BETA_RMI <= -RANGE_NEAR
+BUN = BETA_RMI  <= -RANGE_NEAR
 
 AUF = APLHA_RMI <= -RANGE_FAR
-BUF = BETA_RMI <= -RANGE_FAR
+BUF = BETA_RMI  <= -RANGE_FAR
 
 //                                                              GRAPHICAL
 //░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-plotshape(AON, style=shape.triangleup, location=location.belowbar, color=cyan, size=size.small, transp=10)
-plotshape(BON, style=shape.triangleup, location=location.belowbar, color=blues, size=size.normal, transp=20)
+plotshape(AUN, style=shape.triangleup, location=location.belowbar, color=cyan, size=size.small, transp=10)
+plotshape(BUN, style=shape.triangleup, location=location.belowbar, color=blues, size=size.normal, transp=20)
 
-plotshape(AOF, style=shape.triangleup, location=location.belowbar, color=cyan, size=size.small, transp=70)        
-plotshape(BOF, style=shape.triangleup, location=location.belowbar, color=blues, size=size.normal, transp=90)
+plotshape(AUF, style=shape.triangleup, location=location.belowbar, color=cyan, size=size.small, transp=70)        
+plotshape(BUF, style=shape.triangleup, location=location.belowbar, color=blues, size=size.normal, transp=90)
 
-plotshape(AUN, style=shape.triangledown, location=location.abovebar, color=oker, size=size.small, transp=10)
-plotshape(BUN, style=shape.triangledown, location=location.abovebar, color=reds, size=size.normal , transp=20)
+plotshape(AON, style=shape.triangledown, location=location.abovebar, color=oker, size=size.small, transp=10)
+plotshape(BON, style=shape.triangledown, location=location.abovebar, color=reds, size=size.normal , transp=20)
 
-plotshape(AUF, style=shape.triangledown, location=location.abovebar, color=oker, size=size.small, transp=70)
-plotshape(BUF, style=shape.triangledown, location=location.abovebar, color=reds, size=size.normal , transp=90)
+plotshape(AOF, style=shape.triangledown, location=location.abovebar, color=oker, size=size.small, transp=70)
+plotshape(BOF, style=shape.triangledown, location=location.abovebar, color=reds, size=size.normal , transp=90)
 ```
