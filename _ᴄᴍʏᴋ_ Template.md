@@ -3,7 +3,7 @@
 ## Introduction 
 Short introduction to the script
 * Your motivation to create this
-* Rethoric question that this script applies to
+* What this script applies to
 
 ## Origin 
 Short description of its origin.
