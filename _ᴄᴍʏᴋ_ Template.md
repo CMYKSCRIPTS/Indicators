@@ -1,5 +1,5 @@
 # TITLE
-![PREVIEW](image url.png)
+![PREVIEW](https://www.tradingview.com/x/LzRzlh3o/)
 ## Introduction 
 Short introduction to the script
 * Your motivation to create this
