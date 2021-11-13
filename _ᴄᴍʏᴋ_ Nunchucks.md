@@ -1,5 +1,5 @@
 # TITLE
-![PREVIEW](https://www.tradingview.com/x/LzRzlh3o/)
+![PREVIEW](https://s3.tradingview.com/8/84VJskLO_mid.png)
 [✖ Nunchucks](https://www.tradingview.com/script/84VJskLO-Nunchucks/)
 
 A new way to display market data
