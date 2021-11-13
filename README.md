@@ -5,5 +5,5 @@
 
 [|ᴄᴍʏᴋ| RMI Arrows](https://github.com/CMYKSCRIPTS/Indicators/blob/master/_%E1%B4%84%E1%B4%8D%CA%8F%E1%B4%8B_%20RMI%20Arrows.md)
 
-[ ]( )
+[|ᴄᴍʏᴋ| Nunchucks](https://github.com/CMYKSCRIPTS/Indicators/blob/master/_%E1%B4%84%E1%B4%8D%CA%8F%E1%B4%8B_%20Nunchucks.md)
 [ ]( )
